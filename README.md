@@ -37,13 +37,9 @@ The following **additional** features are implemented:
 - [x] Loading indicator and progressive load counter while the app fetches the 400 Pokémon
 - [x] Prevent duplicate additions to the team and enforce the 6-Pokémon team limit
 
-## Video Walkthrough
+## Demo
 
-Here's a walkthrough of implemented user stories:
-
-<img src='pokemon-team-builder.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-
-GIF created with ...
+![Pokemon Team Builder Demo](./public/pokemon-team-builder.gif)
 
 ## Notes
 
