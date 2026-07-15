@@ -1,8 +1,8 @@
-# Web Development Project 5 - Pokemon Team Builder
+# Web Development Project 6 - Pokemon Team Builder
 
 Submitted by: **Paris-Riana Campbell**
 
-This web app: A small React + Vite application that lets users browse Paldea-region Pokémon fetched from the public PokeAPI, search and filter them by name and type, and build a team of up to six Pokémon.
+This web app: **A React + Vite dashboard for browsing the full Paldea Pokédex, searching and filtering Pokémon, building a team of up to six, and viewing detailed information for each Pokémon on a unique route.**
 
 Time spent: **5** hours spent in total
 
@@ -10,68 +10,45 @@ Time spent: **5** hours spent in total
 
 The following **required** functionality is completed:
 
-- [x] **The site has a dashboard displaying a list of data fetched using an API call**
-  - The dashboard displays 400 Paldea Pokémon (one per card/row in the grid)
-  - Each Pokémon row/card shows at least two features: name, sprite image, and its types (and includes an "Add to Team" button)
-- [x] **`useEffect` React hook and `async`/`await` are used**
-  - Data is fetched inside useEffect using async/await to progressively load details for each Pokémon
-- [x] **The app dashboard includes at least three summary statistics about the data** 
-  - Summary shown in the left panel includes: total Pokémon loaded, number of Pokémon currently displayed (after filters/search), and number of Pokémon in the current team
-- [x] **A search bar allows the user to search for an item in the fetched data**
-  - The search bar correctly filters Pokémon by name
-  - The list of results dynamically updates as the user types into the search bar
-- [x] **An additional filter allows the user to restrict displayed items by specified categories**
-  - A Type filter (dropdown) restricts displayed Pokémon by type (a different attribute than the search bar)
-  - The filter correctly filters items and the dashboard list updates dynamically as the user adjusts the filter
+- [x] **Clicking on an item in the list view displays more details about it**
+  - Clicking on a Pokémon card in the dashboard navigates to a detail view for that Pokémon
+  - The detail view includes extra information such as height, weight, abilities, and base stats not shown on the dashboard
+  - The same sidebar is displayed in detail view as in dashboard view
+- [x] **Each detail view of an item has a direct, unique URL link to that item’s detail view page**
+  - Each Pokémon detail page is reachable via a unique route such as `/pokemon/:id`
+- [x] **The app includes at least two unique charts developed using the fetched data that tell an interesting story**
+  - A pie chart shows the distribution of Pokémon types across the Paldea dataset
+  - A bar chart highlights the ten tallest Pokémon in the dataset
 
 The following **optional** features are implemented:
 
-- [ ] Multiple filters can be applied simultaneously
-- [x] Filters use different input types
-  - Search uses a text input; Type filter uses a dropdown
-- [ ] The user can enter specific bounds for filter values
+- [x] The site’s customized dashboard contains more content that explains what is interesting about the data
+  - The dashboard includes summary cards, type distribution visuals, and a top-height comparison chart that give more context to the dataset
+- [ ] The site allows users to toggle between different data visualizations
+  - User should be able to use some mechanism to toggle between displaying and hiding visualizations
 
 The following **additional** features are implemented:
 
-- [x] Team management panel: add up to 6 Pokémon to a team and remove them from the team
-- [x] Loading indicator and progressive load counter while the app fetches the 400 Pokémon
-- [x] Prevent duplicate additions to the team and enforce the 6-Pokémon team limit
+- [x] Team management panel that lets the user add up to six Pokémon and remove them from the team
+- [x] Loading indicator and progressive load counter while the app fetches the full Paldea dataset
+- [x] Duplicate prevention and a team-cap enforcement system
+- [x] Search and filter tools to help users quickly find Pokémon by name or type
 
-## Demo
+## Video Walkthrough
 
-![Pokemon Team Builder Demo](./public/pokemon-team-builder.gif)
+Here's a walkthrough of implemented user stories:
+
+<img src='./public/pokemon-team-builder.gif' title='Pokemon Team Builder Demo' width='1000' alt='Pokemon Team Builder Demo' />
+
+GIF created with ScreenToGif
 
 ## Notes
 
 Challenges encountered while building the app:
 
-- Fetching 400 Pokémon in sequence required careful use of async/await to avoid overwhelming the UI; the app progressively updates state so the user sees a loading counter while entries are appended.
-- The PokeAPI requires several requests per entry (species -> pokemon) to obtain sprites and type data; implemented a loop that fetches each entry's details and appends them to state.
-- Ensuring filters and search interact correctly required computing a derived filtered list from both inputs (search text + type dropdown) and using that list for the grid display.
-
-## Running locally
-
-1. Install dependencies:
-
-   npm install
-
-2. Start the dev server:
-
-   npm run dev
-
-3. Open the app in your browser (usually at http://localhost:5173)
-
-Notes:
-- The app fetches data from https://pokeapi.co/ and requires an internet connection.
-
-## Project structure (important files)
-
-- src/App.jsx — main app component (fetching, state, filtering, and team management)
-- src/components/SearchBar.jsx — search input component
-- src/components/Filter.jsx — type filter dropdown
-- src/components/Summary.jsx — summary statistics component
-- src/components/PokemonGrid.jsx — grid that renders Pokémon rows/cards
-- src/components/TeamPanel.jsx — team management sidebar
+- Fetching all 400 Paldea Pokémon required careful use of `useEffect` and `async`/`await` to progressively load data without freezing the UI.
+- The PokeAPI returned data in a multi-step format, so the app had to request species information and then Pokémon detail information for each entry.
+- Keeping the search, type filter, and team panel in sync required careful state management so that the dashboard and detail views stayed consistent.
 
 ## License
 

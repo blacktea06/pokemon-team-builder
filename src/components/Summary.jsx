@@ -1,15 +1,14 @@
-function Summary({pokemon}) {
+function Summary({ pokemon = [], team = [] }) {
 
 
   const totalPokemon = pokemon.length;
 
 
   const totalTypes = new Set(
-    pokemon.flatMap(
-      (poke)=> 
-        poke.types.map(
-          (type)=>type.type.name
-        )
+    pokemon.flatMap((poke) =>
+      poke.types.map(
+        (type) => type.type.name
+      )
     )
   ).size;
 
@@ -19,25 +18,57 @@ function Summary({pokemon}) {
 
     <div className="panel">
 
-      <h2>Stats</h2>
+      <h2 className="summary-title">
+        Pokédex Stats
+      </h2>
 
 
-      <p>
-        Pokémon Loaded:
-        <strong> {totalPokemon}</strong>
-      </p>
+
+      <div className="summary-grid">
 
 
-      <p>
-        Types Available:
-        <strong> {totalTypes}</strong>
-      </p>
+        <div className="stat-card">
+
+          <h3>
+            {totalPokemon}
+          </h3>
+
+          <p>
+            Pokémon
+          </p>
+
+        </div>
 
 
-      <p>
-        Team Size:
-        <strong> Coming Soon</strong>
-      </p>
+
+        <div className="stat-card">
+
+          <h3>
+            {totalTypes}
+          </h3>
+
+          <p>
+            Types
+          </p>
+
+        </div>
+
+
+
+        <div className="stat-card">
+
+          <h3>
+            {team.length}
+          </h3>
+
+          <p>
+            Team
+          </p>
+
+        </div>
+
+
+      </div>
 
 
     </div>

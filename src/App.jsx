@@ -1,71 +1,43 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-import Header from "./components/Header";
-import SearchBar from "./components/SearchBar";
-import Filter from "./components/Filter";
-import Summary from "./components/Summary";
-import PokemonGrid from "./components/PokemonGrid";
-import TeamPanel from "./components/TeamPanel";
+import { Routes, Route } from "react-router-dom";
+
+import Dashboard from "./pages/Dashboard";
+import PokemonDetail from "./pages/PokemonDetail";
 
 
 function App() {
 
+
   const [pokemon, setPokemon] = useState([]);
+
   const [search, setSearch] = useState("");
+
   const [typeFilter, setTypeFilter] = useState("all");
+
   const [team, setTeam] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
 
 
-  // Fetch Paldea Pokemon gradually
+
+
+  // Load saved team when app starts
   useEffect(() => {
 
-  async function getPokemon() {
-
-    const response = await fetch(
-      "https://pokeapi.co/api/v2/pokedex/31"
-    );
-
-
-    const data = await response.json();
-
-
-    for (const entry of data.pokemon_entries) {
-
-
-      const response = await fetch(
-        entry.pokemon_species.url
+    const savedTeam =
+      JSON.parse(
+        localStorage.getItem("pokemonTeam")
       );
 
 
-      const speciesData = await response.json();
+    if(savedTeam){
 
-
-      const pokemonResponse = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${speciesData.id}`
-      );
-
-
-      const pokemonData = await pokemonResponse.json();
-
-
-      setPokemon((previousPokemon) => [
-        ...previousPokemon,
-        pokemonData
-      ]);
-
+      setTeam(savedTeam);
 
     }
-
-
-    setLoading(false);
-
-  }
-
-
-  getPokemon();
 
 
   }, []);
@@ -73,28 +45,178 @@ function App() {
 
 
 
-  // Search + Type Filter
-  const filteredPokemon = pokemon.filter((poke) => {
+
+  // Save team whenever it changes
+  useEffect(() => {
+
+    localStorage.setItem(
+      "pokemonTeam",
+      JSON.stringify(team)
+    );
 
 
-    const matchesName = poke.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
+  }, [team]);
 
 
 
-    const matchesType =
-      typeFilter === "all" ||
-      poke.types.some(
-        (type) => type.type.name === typeFilter
+
+
+
+  // Fetch Paldea Pokemon gradually
+  useEffect(() => {
+
+
+    let ignore = false;
+
+
+
+    async function getPokemon(){
+
+
+      const response = await fetch(
+        "https://pokeapi.co/api/v2/pokedex/31"
       );
 
 
+      const data = await response.json();
 
-    return matchesName && matchesType;
 
 
-  });
+
+      for(const entry of data.pokemon_entries){
+
+
+        const speciesResponse =
+          await fetch(
+            entry.pokemon_species.url
+          );
+
+
+        const speciesData =
+          await speciesResponse.json();
+
+
+
+
+        const pokemonResponse =
+          await fetch(
+            `https://pokeapi.co/api/v2/pokemon/${speciesData.id}`
+          );
+
+
+
+        const pokemonData =
+          await pokemonResponse.json();
+
+
+
+
+        if(!ignore){
+
+
+          setPokemon((previousPokemon)=>{
+
+
+            const alreadyExists =
+              previousPokemon.some(
+                (poke)=>
+                  poke.id === pokemonData.id
+              );
+
+
+
+            if(alreadyExists){
+
+              return previousPokemon;
+
+            }
+
+
+
+            return [
+
+              ...previousPokemon,
+
+              pokemonData
+
+            ];
+
+
+          });
+
+
+        }
+
+
+      }
+
+
+
+      if(!ignore){
+
+        setLoading(false);
+
+      }
+
+
+    }
+
+
+
+    getPokemon();
+
+
+
+    return ()=>{
+
+      ignore = true;
+
+    };
+
+
+  }, []);
+
+
+
+
+
+
+
+
+  // Search + Type Filter
+  const filteredPokemon = pokemon.filter(
+    (poke)=>{
+
+
+      const matchesName =
+        poke.name
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          );
+
+
+
+
+      const matchesType =
+        typeFilter === "all" ||
+
+        poke.types.some(
+          (type)=>
+            type.type.name === typeFilter
+        );
+
+
+
+
+      return matchesName && matchesType;
+
+
+    }
+
+  );
+
+
 
 
 
@@ -102,10 +224,10 @@ function App() {
 
 
   // Add Pokemon to Team
-  function addToTeam(poke) {
+  function addToTeam(poke){
 
 
-    if (team.length >= 6) {
+    if(team.length >= 6){
 
       return;
 
@@ -113,18 +235,26 @@ function App() {
 
 
 
-    const alreadyAdded = team.some(
-      (member) => member.id === poke.id
-    );
+
+    const alreadyAdded =
+      team.some(
+        (member)=>
+          member.id === poke.id
+      );
 
 
 
-    if (!alreadyAdded) {
 
-      setTeam([
-        ...team,
-        poke
-      ]);
+    if(!alreadyAdded){
+
+
+      setTeam(
+        [
+          ...team,
+          poke
+        ]
+      );
+
 
     }
 
@@ -135,14 +265,21 @@ function App() {
 
 
 
+
+
+
+
   // Remove Pokemon from Team
-  function removeFromTeam(id) {
+  function removeFromTeam(id){
 
 
     setTeam(
+
       team.filter(
-        (poke) => poke.id !== id
+        (poke)=>
+          poke.id !== id
       )
+
     );
 
 
@@ -152,122 +289,77 @@ function App() {
 
 
 
+
+
+
   return (
 
-    <div className="app">
+    <Routes>
 
 
-      <Header />
+      <Route
 
+        path="/"
 
+        element={
 
-      <div className="layout">
+          <Dashboard
 
+            pokemon={pokemon}
 
+            filteredPokemon={filteredPokemon}
 
-        <aside className="left-panel">
-
-
-
-          <SearchBar
+            loading={loading}
 
             search={search}
 
             setSearch={setSearch}
 
-          />
-
-
-
-          <Filter
-
             typeFilter={typeFilter}
 
             setTypeFilter={setTypeFilter}
 
-          />
-
-
-
-          <Summary
-
-            pokemon={pokemon}
-
-          />
-
-
-
-          <TeamPanel
-
             team={team}
+
+            addToTeam={addToTeam}
 
             removeFromTeam={removeFromTeam}
 
           />
 
+        }
 
-
-        </aside>
-
-
-
-
-
-
-        <main className="pokemon-area">
-
-
-
-          {loading && (
-
-            <h2 className="loading">
-
-              Catching Paldea Pokémon...
-
-              <br />
-
-              Loaded {pokemon.length}/400
-
-            </h2>
-
-          )}
-
-
-
-          {!loading && (
-
-            <h2 className="loading">
-
-              All 400 Paldea Pokémon Loaded!
-
-            </h2>
-
-          )}
+      />
 
 
 
 
 
+      <Route
 
-          <PokemonGrid
+        path="/pokemon/:id"
 
-            pokemon={filteredPokemon}
+        element={
+
+          <PokemonDetail
+
+            pokemon={pokemon}
+
+            team={team}
 
             addToTeam={addToTeam}
 
+            removeFromTeam={removeFromTeam}
+
           />
 
+        }
 
-
-        </main>
-
-
-
-      </div>
+      />
 
 
 
-    </div>
+    </Routes>
 
   );
 

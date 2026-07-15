@@ -1,64 +1,74 @@
+import { Link } from "react-router-dom";
+
 function PokemonCard({ poke, addToTeam }) {
+
+  function handleAddToTeam(event) {
+    // Prevent clicking the button from opening the detail page
+    event.stopPropagation();
+    event.preventDefault();
+
+    addToTeam(poke);
+  }
+
 
   return (
 
     <div className="pokemon-card">
 
 
-      <img
-        src={poke.sprites.front_default}
-        alt={poke.name}
-      />
+      <Link 
+        to={`/pokemon/${poke.id}`}
+        className="pokemon-link"
+      >
+
+        <img
+          src={
+            poke.sprites.other["official-artwork"].front_default
+          }
+          alt={poke.name}
+        />
 
 
-      <h2>
-        {poke.name.toUpperCase()}
-      </h2>
+        <h3>
+          {poke.name}
+        </h3>
 
 
-      <div className="types">
 
-        {
-          poke.types.map((type)=>(
-            
-            <span 
+        <div className="types">
+
+          {poke.types.map((type) => (
+
+            <span
               className="type"
               key={type.type.name}
             >
+
               {type.type.name}
+
             </span>
 
-          ))
-        }
+          ))}
 
-      </div>
-
-
-      <p>
-        Height:
-        {" "}
-        {poke.height / 10} m
-      </p>
+        </div>
 
 
-      <p>
-        Weight:
-        {" "}
-        {poke.weight / 10} kg
-      </p>
+      </Link>
+
 
 
       <button
-        onClick={()=>addToTeam(poke)}
+        onClick={handleAddToTeam}
       >
-        Add To Team
+
+        Add to Team
+
       </button>
 
 
     </div>
 
   );
-
 }
 
 
